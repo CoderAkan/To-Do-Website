@@ -3,8 +3,9 @@ import Layout from "../pages/layout";
 import ErrorPage from "../pages/error_page";
 import Home from "../pages/home";
 import Tasks from "../pages/tasks";
-import Categories from "../pages/categories";
+import Categories, { categoriesAction, categoriesLoader } from "../pages/categories";
 import Auth from "../pages/auth";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export const router = createBrowserRouter([
     {
@@ -14,15 +15,26 @@ export const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Home />,
+                element: 
+                    (<ProtectedRoute>
+                        <Home />
+                    </ProtectedRoute>)
             },
             {
                 path: "tasks",
-                element: <Tasks />,
+                element: 
+                    (<ProtectedRoute>
+                        <Tasks />
+                    </ProtectedRoute>)
             },
             {
                 path: "categories",
-                element: <Categories />,
+                action: categoriesAction,
+                loader: categoriesLoader,
+                element: 
+                    (<ProtectedRoute>
+                        <Categories />
+                    </ProtectedRoute>),
             },
             {
                 path: "auth",

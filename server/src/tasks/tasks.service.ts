@@ -9,11 +9,11 @@ export class TasksService {
     private readonly prisma: PrismaService,
   ) {}
   async create(createTaskDto: CreateTaskDto, id: number) {
-    const categoryExists = await this.prisma.category.findUnique({
+    const category = await this.prisma.category.findUnique({
       where: { id: createTaskDto.categoryId },
     });
 
-    if (!categoryExists) {
+    if (!category) {
       throw new NotFoundException('Category not found');
     }
     return await this.prisma.task.create({
@@ -22,7 +22,7 @@ export class TasksService {
         description: createTaskDto.description,
         isChecked: createTaskDto.isChecked,
         userId: id,
-        categoryId: createTaskDto.categoryId
+        categoryId: createTaskDto.categoryId,
       },
     });  
   }
@@ -31,6 +31,9 @@ export class TasksService {
     const tasks = await this.prisma.task.findMany({
       where: {
         user: {id}
+      },
+      include: {
+        category: true,
       },
       orderBy: {
         createdAt: 'desc',

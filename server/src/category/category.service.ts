@@ -63,12 +63,31 @@ export class CategoryService {
   }
 
   async remove(id: number) {
-    const category = await this.prisma.category.findUnique({where: {id}});
-    if (!category) throw new NotFoundException('Category not found!')
+    const category = await this.prisma.category.findUnique({ where: { id } });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    // Find all tasks that belong to the category
+    const tasks = await this.prisma.task.findMany({ where: { categoryId: id } });
+    console.log(tasks)// Update all tasks to remove the category association
+    
+    const updateTasksPromises = tasks.map(async task => {
+      await this.prisma.task.update({
+        where: { id: task.id },
+        data: {
+          categoryId: null,
+        },
+      });
+    });
+
+    await Promise.all(updateTasksPromises);
+
+    // Now delete the category
     return await this.prisma.category.delete({
       where: {
         id: id,
       }
-    })
+    });
   }
 }

@@ -30,3 +30,23 @@ export interface ICategory {
     updatedAt: string
     tasks: []
 }
+
+export interface IResponseTaskLoader {
+    categories: ICategory[]
+    tasks: ITask[]
+}
+
+export interface ITask {
+    title: string
+    description: string
+    createdAt: string
+    updatedAt: string
+    isChecked: boolean
+    id: number
+    userId: number
+    categoryId: number
+    category: {
+        id: number;
+        title: string;
+      };
+}

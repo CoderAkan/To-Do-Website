@@ -80,9 +80,8 @@ export class CategoryService {
         },
       });
     });
-
     await Promise.all(updateTasksPromises);
-
+    console.log("It doesn't work");
     // Now delete the category
     return await this.prisma.category.delete({
       where: {

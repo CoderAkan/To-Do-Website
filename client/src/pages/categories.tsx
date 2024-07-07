@@ -5,15 +5,17 @@ import { Form, useLoaderData } from "react-router-dom";
 import CategoryModal from "../components/CategoryModal";
 import { instance } from "../api/axios.api";
 import { ICategory } from "../types/types";
+import { toast } from "react-toastify";
 
 export const categoriesAction = async ({request}: any) => {
     switch (request.method){
-        case 'POST': {
+        case "POST": {
             const formData = await request.formData()
-            const title = {
+            const newCategory = {
                 title: formData.get('title'),
             }
-            await instance.post('/categories', title)
+            await instance.post('/categories', newCategory)
+            toast.success('Category was added')
             return null
         }
         case "PATCH": {
@@ -23,12 +25,14 @@ export const categoriesAction = async ({request}: any) => {
                 title: formData.get('title')
             }
             await instance.patch(`categories/category/${category.id}`, category)
+            toast.success('Category was updated')
             return null
         }
         case "DELETE": {
             const formData = await request.formData()
             const categoryId = formData.get('id')
             await instance.delete(`/categories/category/${categoryId}`)
+            toast.success('Category was deleted')
             return null
         }
     }
@@ -42,8 +46,8 @@ export const categoriesLoader = async () => {
 const Categories: FC = () => {
     const categories = useLoaderData() as ICategory[]
     const [categoryId, setCategoryId] = useState<number>(0)
-    const [isEdit, setIsEdit] = useState<boolean>(false)
     const [visibleModal, setVisibleModal] = useState<boolean>(false)
+    const [isEdit, setIsEdit] = useState<boolean>(false)
     return (
         <>
             <div className="mt-10 p-4 rounded-md bg-slate-800">
@@ -79,15 +83,15 @@ const Categories: FC = () => {
             </div>
             
             {/* Add category modal */}
-            {visibleModal && (
-                <CategoryModal type='post' setVisibleModal={setVisibleModal} setIsEdit={setIsEdit} />
+            {visibleModal && !isEdit && (
+                <CategoryModal type='post' setVisibleModal={setVisibleModal} />
                 )
             }
-            {
-                visibleModal && isEdit && (
-                    <CategoryModal type='patch' id={categoryId} setVisibleModal={setVisibleModal} setIsEdit={setIsEdit} />
-                    )
-            }
+            {/* Update category modal */}
+            {visibleModal && isEdit && (
+                <CategoryModal type='patch' id={categoryId} setVisibleModal={setVisibleModal} />
+                )
+            } 
 
         </>
     )

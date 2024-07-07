@@ -70,19 +70,16 @@ export class CategoryService {
 
     // Find all tasks that belong to the category
     const tasks = await this.prisma.task.findMany({ where: { categoryId: id } });
-    console.log(tasks)// Update all tasks to remove the category association
     
-    const updateTasksPromises = tasks.map(async task => {
-      await this.prisma.task.update({
-        where: { id: task.id },
-        data: {
-          categoryId: null,
-        },
-      });
-    });
-    await Promise.all(updateTasksPromises);
-    console.log("It doesn't work");
-    // Now delete the category
+    await this.prisma.task.updateMany({
+      where: {
+        categoryId: id, 
+      },
+      data: {
+        categoryId: null,
+      }
+    })
+
     return await this.prisma.category.delete({
       where: {
         id: id,

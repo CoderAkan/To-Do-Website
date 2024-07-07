@@ -44,9 +44,9 @@ export interface ITask {
     isChecked: boolean
     id: number
     userId: number
-    categoryId: number
-    category: {
+    categoryId?: number
+    category?: {
         id: number;
-        title: string;
+        title?: string;
       };
 }

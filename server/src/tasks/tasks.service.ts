@@ -19,7 +19,7 @@ export class TasksService {
     return await this.prisma.task.create({
       data: {
         title: createTaskDto.title,
-        description: createTaskDto.description,
+        description: createTaskDto.description || '',
         isChecked: createTaskDto.isChecked,
         userId: id,
         categoryId: createTaskDto.categoryId,

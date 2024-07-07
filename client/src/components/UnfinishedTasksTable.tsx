@@ -1,25 +1,21 @@
 import { FC, useEffect, useState } from 'react'
-import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
-import { IoMdCheckboxOutline } from "react-icons/io";
-import { FaTrash } from 'react-icons/fa';
-import { Form, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { IResponseTaskLoader, ITask } from '../types/types';
-import { formatDate } from '../helpers/date.helper';
 import { instance } from '../api/axios.api';
 import ReactPaginate from 'react-paginate';
+import ToDo from './to-do';
 
 interface IUnfinishedTasksTable{
     limit: number
-
 }
 
-const UnfinishedTasksTable: FC<IUnfinishedTasksTable> = ({limit = 3 }) => {
+const UnfinishedTasksTable: FC<IUnfinishedTasksTable> = ({limit = 5 }) => {
   const { tasks: initialTasks } = useLoaderData() as IResponseTaskLoader
   const [tasks, setTasks] = useState<ITask[]>(initialTasks)
   const [data, setData] = useState<ITask[]>([])
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(0)
-
+  
   const fetchTasks = async (page: number) => {
     const response = await instance.get(`/tasks/pagination?page=${page}&limit=${limit}`)
     setData(response.data)
@@ -31,13 +27,6 @@ const UnfinishedTasksTable: FC<IUnfinishedTasksTable> = ({limit = 3 }) => {
 
   const handlePageChange = (selectedItem: {selected: number}) => {
     setCurrentPage(selectedItem.selected + 1)
-  }
-
-  const handleCheckToggle = (index: number) => {
-    const updatedTasks = data.map((task, i) =>
-        i === index ? {...task, isChecked: !task.isChecked }: task
-    );
-    setData(updatedTasks);
   }
 
 
@@ -56,45 +45,16 @@ const UnfinishedTasksTable: FC<IUnfinishedTasksTable> = ({limit = 3 }) => {
         pageRangeDisplayed={1}
         marginPagesDisplayed={2}
         onPageChange={handlePageChange}
-
     />
-    <div className='bg-slate-800 px-4 py-3 mt-4 rounded-md'>
-        <table className='w-full'>
-            <thead>
-                <tr>
-                    <td className='font-bold'>✅/❌</td>
-                    <td className='font-bold'>#</td>
-                    <td className='font-bold'>Title</td>
-                    <td className='font-bold'>Description</td>
-                    <td className='font-bold'>Category</td>
-                    <td className='font-bold'>Date</td>
-                    <td className='text-right'>Action</td>
-                </tr>
-            </thead>
-            <tbody>
-                {
-                data.map((task, index) => (
-                    <tr key={index}>
-                    <td onClick={() => handleCheckToggle(index)}>{task.isChecked ? <IoMdCheckboxOutline /> : <MdOutlineCheckBoxOutlineBlank />}</td>
-                    <td>{index + 1}</td>
-                    <td>{task.title}</td>
-                    <td>{task.description}</td>
-                    <td>{task.category?.title}</td>
-                    <td> {formatDate(task.createdAt)} </td>
-                    <td>
-                        <Form method='delete' action='/tasks'>
-                            <input type="hidden" name='id' value={task.id} />
-                            <button className='btn hover:btn-red ml-auto'>
-                                <FaTrash />
-                            </button>
-                        </Form>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-        </table>
+    <div className='bg-slate-800 px-4 py-3 mt-4 mb-4 rounded-md grid'>
+      {
+        data.map((task, index) => (
+          <ToDo task={task} index={index} />
+        ))}    
     </div> 
-  </>)
+    
+  </>
+  )
 }
 
 export default UnfinishedTasksTable

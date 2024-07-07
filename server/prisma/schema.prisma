@@ -26,8 +26,8 @@ model User {
 model Task {
   id          Int      @id @default(autoincrement())
   title       String
-  description String? @default('')
-  isChecked   Boolean?  @default(false)
+  description String?
+  isChecked   Boolean  @default(false)
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
   category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)

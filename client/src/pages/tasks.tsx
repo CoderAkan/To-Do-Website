@@ -17,6 +17,7 @@ export const taskLoader = async () => {
 export const taskAction = async ({ request }: any) => {
     switch (request.method) {
         case "POST": {
+            console.log("post")
             const formData = await request.formData()
             const newTask = {
                 title: formData.get('title'),
@@ -24,7 +25,6 @@ export const taskAction = async ({ request }: any) => {
                 categoryId: +formData.get('category'),
                 isChecked: false,
             }
-
             await instance.post('/tasks', newTask)
             toast.success('Task was added')
             return null
@@ -37,7 +37,17 @@ export const taskAction = async ({ request }: any) => {
             return null
         }
         case "PATCH": {
-            
+            const formData = await request.formData()
+            const taskId = formData.get('id')
+            const updatedTask = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                categoryId: +formData.get('category'),
+                isChecked: false,
+            }
+            await instance.patch(`tasks/task/${taskId}`, updatedTask)
+            toast.success("The task was updated")
+            return null
         }
     }
 }
@@ -47,7 +57,9 @@ const Tasks: FC = () => {
         <div className="grid grid-cols-3 gap-4 mt-4 items-start">
             {/* Add task */}
             <div className="grid col-span-2">
-                <TaskForm />
+                <TaskForm type={"post"} prevTitle={""} prevDescription={""} setVisibleModal={function (visible: boolean): void {
+                    throw new Error("Function not implemented.");
+                } } />
             </div>
         </div>
     </>

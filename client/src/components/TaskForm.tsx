@@ -9,18 +9,22 @@ interface ITaskForm {
   prevTitle: string;
   prevDescription: string;
   prevCategory?: number;
+  prevDate?: string;
   id?: number;
   setVisibleModal: (visible: boolean) => void;
   setIsEdit?: (edit: boolean) => void;
 }
 
-const TaskForm: FC<ITaskForm> = ({type, id, setVisibleModal, setIsEdit, prevTitle, prevDescription, prevCategory}) => {
+const TaskForm: FC<ITaskForm> = ({type, id, setVisibleModal, setIsEdit, prevTitle, prevDescription, prevCategory, prevDate}) => {
   const { categories } = useLoaderData() as IResponseTaskLoader
   const [visibleTaskModal, setVisibleCatModal] = useState<boolean>(false)
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<number>();
-  
+  const nowDate = new Date()
+  const [dueDate, setDueDate] = useState<string>(nowDate.toISOString().substring(0, 10));
+
+
   return (
     <div className='rounded-md bg-slate-800 p-4'>
         <Form 
@@ -45,6 +49,16 @@ const TaskForm: FC<ITaskForm> = ({type, id, setVisibleModal, setIsEdit, prevTitl
             <label htmlFor="description" className='grid'>
                 <span>Description</span>
                 <input type="text" className='input' placeholder={type=="patch" ? prevDescription : "Title"} name='description' value={description} onChange={(e) => setDescription(e.target.value)} />
+            </label>
+
+            <label htmlFor="due date" className='grid'>
+                <span>Due Date</span>
+                <input type="date" className='input' name='dueDate' value={dueDate === '' ? prevDate : dueDate} onChange={(e) => {
+                    const dateString = e.target.value; 
+                    const dateObject = new Date(dateString);
+
+                    setDueDate(dateObject.toISOString().substring(0, 10));
+                }} />
             </label>
 
             {/* Select category*/}

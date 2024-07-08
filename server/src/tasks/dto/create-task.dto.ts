@@ -1,5 +1,4 @@
-import { Category } from "@prisma/client"
-import { IsNotEmpty, IsNumber, IsOptional } from "class-validator"
+import { IsDate, IsNotEmpty, IsNumber, IsOptional } from "class-validator"
 
 export class CreateTaskDto {
     @IsNotEmpty()
@@ -18,4 +17,7 @@ export class CreateTaskDto {
     @IsOptional()
     @IsNumber()
     userId?: number
+
+    @IsNotEmpty()
+    dueDate: Date
 }

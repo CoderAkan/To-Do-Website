@@ -23,6 +23,7 @@ export class TasksService {
         isChecked: createTaskDto.isChecked,
         userId: id,
         categoryId: createTaskDto.categoryId,
+        dueDate: createTaskDto.dueDate,
       },
     });  
   }
@@ -57,12 +58,12 @@ export class TasksService {
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
-    const { title, description, isChecked } = updateTaskDto;
+    const { title, description, isChecked, dueDate } = updateTaskDto;
     const task = await this.prisma.task.findUnique({where: {id}, include: {user: true, category: true}})
     if (!task) throw new NotFoundException('Task not found')
     return await this.prisma.task.update({
       where: {id},
-      data: {title, description, isChecked}
+      data: {title, description, isChecked, dueDate}
     })
   }
 

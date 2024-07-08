@@ -45,6 +45,7 @@ export interface ITask {
     id: number
     userId: number
     categoryId?: number
+    dueDate: string
     category?: {
         id: number;
         title?: string;

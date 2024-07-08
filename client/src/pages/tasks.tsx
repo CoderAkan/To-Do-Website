@@ -17,13 +17,15 @@ export const taskLoader = async () => {
 export const taskAction = async ({ request }: any) => {
     switch (request.method) {
         case "POST": {
-            console.log("post")
             const formData = await request.formData()
+            console.log(formData.get('dueDate'))
+            console.log(formData.get('dueDate') + 'T00:00:00.000Z')
             const newTask = {
                 title: formData.get('title'),
                 description: formData.get('description'),
                 categoryId: +formData.get('category'),
                 isChecked: false,
+                dueDate: formData.get('dueDate') + 'T00:00:00.000Z',
             }
             await instance.post('/tasks', newTask)
             toast.success('Task was added')
@@ -44,6 +46,7 @@ export const taskAction = async ({ request }: any) => {
                 description: formData.get('description'),
                 categoryId: +formData.get('category'),
                 isChecked: false,
+                dueDate: new Date(formData.get('dueDate')),
             }
             await instance.patch(`tasks/task/${taskId}`, updatedTask)
             toast.success("The task was updated")
